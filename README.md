@@ -1,1 +1,1 @@
-# buyer-decision-model-pre-construction-real-estate-portfolio
+# buyer-decision-model-portfolio
