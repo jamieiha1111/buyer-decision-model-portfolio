@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buyer Decision Model — Case Study | Jamie Iha</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1628;--navy2:#0d1e38;--slate:#1e3a5f;
+  --accent:#185FA5;--accent2:#378ADD;--accent-light:#E6F1FB;--accent-dark:#0C447C;
+  --teal:#0f7490;--teal-light:#e0f5f9;--teal-mid:#1D9E75;
+  --green:#0F6E56;--green-light:#E1F5EE;
+  --amber:#854F0B;--amber-light:#FAEEDA;
+  --red:#993C1D;--red-light:#FAECE7;
+  --text:#0a1628;--text2:#3a3a36;--text3:#6b6b67;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.12);
+  --bg:#f5f4f0;--white:#fff;--warm:#f8f6f1;
+  --r:8px;--rl:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:0.5px solid var(--border);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 48px}
+.nav-logo{font-family:'Playfair Display',serif;font-size:17px;color:var(--navy);text-decoration:none;font-style:italic}
+.nav-logo span{color:var(--accent);font-style:normal}
+.nav-right{display:flex;align-items:center;gap:24px}
+.nav-link{font-size:13px;color:var(--text3);text-decoration:none;font-weight:500;transition:.15s}
+.nav-link:hover{color:var(--navy)}
+.nav-cta{background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 18px;border-radius:var(--r);text-decoration:none;transition:.15s}
+.nav-cta:hover{background:var(--slate)}
+
+/* HERO */
+.hero{background:var(--navy);padding:80px 48px 0;position:relative;overflow:hidden}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 360px;gap:64px;align-items:end}
+.hero::before{content:'';position:absolute;top:-100px;right:-60px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(55,138,221,.09) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-60px;left:8%;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(29,158,117,.06) 0%,transparent 70%);pointer-events:none}
+.hero-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:0.5px solid rgba(255,255,255,.11);color:rgba(255,255,255,.4);font-size:10px;font-weight:600;padding:4px 11px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.hero-hook{font-size:13px;color:rgba(255,255,255,.3);font-style:italic;margin-bottom:10px;letter-spacing:.2px}
+.hero-title{font-family:'Playfair Display',serif;font-size:52px;color:#fff;line-height:1.06;margin-bottom:16px;letter-spacing:-.5px;position:relative;z-index:1}
+.hero-title em{color:#5DCAA5;font-style:italic}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.45);line-height:1.8;max-width:500px;margin-bottom:28px;font-weight:300;position:relative;z-index:1}
+.hero-btns{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:52px;position:relative;z-index:1}
+.btn-pri{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;text-decoration:none;padding:12px 24px;border-radius:var(--r);font-size:13px;font-weight:600;transition:.2s}
+.btn-pri:hover{background:#1452a0;transform:translateY(-1px)}
+.btn-out{display:inline-flex;align-items:center;gap:8px;background:transparent;color:rgba(255,255,255,.45);text-decoration:none;padding:12px 20px;border-radius:var(--r);font-size:13px;border:0.5px solid rgba(255,255,255,.15);transition:.2s}
+.btn-out:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.hero-stats{background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.07);border-radius:var(--rl) var(--rl) 0 0;padding:24px;display:flex;flex-direction:column;gap:20px}
+.hs-item{}
+.hs-num{font-family:'Playfair Display',serif;font-size:28px;color:#fff;line-height:1;margin-bottom:3px}
+.hs-label{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.2px}
+.hs-divider{height:0.5px;background:rgba(255,255,255,.07)}
+
+/* STATS BAR */
+.stats-bar{background:var(--accent-dark);padding:0;display:grid;grid-template-columns:repeat(4,1fr)}
+.sb-item{padding:18px 24px;border-right:0.5px solid rgba(255,255,255,.08);text-align:center}
+.sb-item:last-child{border-right:none}
+.sb-num{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:3px}
+.sb-label{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.2px}
+
+/* SECTIONS */
+.section{padding:80px 48px;max-width:1100px;margin:0 auto}
+.section-narrow{max-width:720px;margin:0 auto;padding:80px 48px}
+.full-bg{padding:80px 0}
+.full-bg-inner{max-width:1100px;margin:0 auto;padding:0 48px}
+.eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';width:18px;height:1.5px;background:var(--accent)}
+.eyebrow.teal{color:var(--teal)}
+.eyebrow.teal::before{background:var(--teal)}
+.section-title{font-family:'Playfair Display',serif;font-size:36px;color:var(--navy);line-height:1.15;margin-bottom:14px}
+.section-body{font-size:15px;color:var(--text2);line-height:1.85;margin-bottom:16px}
+.divider{height:0.5px;background:var(--border)}
+
+/* STORY */
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.pull-quote{background:var(--accent-light);border-left:3px solid var(--accent);padding:18px 22px;margin-top:24px;border-radius:0 var(--r) var(--r) 0}
+.pq-text{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);line-height:1.65;font-style:italic;margin-bottom:8px}
+.pq-attr{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+.friction-list{background:var(--warm);border-radius:var(--rl);padding:28px}
+.fl-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--navy);margin-bottom:16px}
+.fl-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:14px;color:var(--text2);line-height:1.65}
+.fl-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);margin-top:8px;flex-shrink:0}
+
+/* TOOL SCREENSHOTS */
+.screenshots-bg{background:var(--bg)}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+.mock-wrap{background:var(--white);border:0.5px solid var(--border2);border-radius:var(--rl);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.mock-bar{background:var(--navy2);padding:10px 14px;display:flex;align-items:center;gap:6px}
+.mock-dot{width:8px;height:8px;border-radius:50%}
+.mock-body{padding:16px}
+.mock-caption{font-size:12px;color:var(--text3);text-align:center;margin-top:10px;font-style:italic}
+
+/* GRADE MOCK */
+.gm{display:flex;align-items:center;justify-content:space-between;background:var(--amber-light);border:0.5px solid rgba(133,79,11,.2);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.gm-eyebrow{font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--amber);margin-bottom:3px}
+.gm-title{font-size:15px;font-weight:700;color:var(--navy);font-family:'Playfair Display',serif}
+.gm-sub{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.4;max-width:180px}
+.gm-grade{font-family:'Playfair Display',serif;font-size:48px;font-weight:700;color:var(--amber);line-height:1}
+.kpi-mini{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.km{background:var(--bg);border-radius:var(--r);padding:9px 11px}
+.km-l{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;font-weight:600}
+.km-v{font-size:17px;font-weight:700;color:var(--navy);font-family:'Playfair Display',serif;line-height:1}
+.km-v.r{color:var(--red)}
+.km-v.g{color:var(--green)}
+.km-v.b{color:var(--accent)}
+.sum-mock{background:var(--navy);border-radius:var(--r);padding:11px 13px}
+.sm-lbl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);font-weight:700;margin-bottom:5px}
+.sm-txt{font-size:11px;color:rgba(255,255,255,.75);line-height:1.6}
+.sm-red{color:#f5836b;font-weight:600}
+.sm-green{color:#4dd99b;font-weight:600}
+
+/* COMPARE MOCK */
+.cm{background:var(--navy);border-radius:var(--r);padding:14px 16px}
+.cm-lbl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);font-weight:700;margin-bottom:12px}
+.cm-row{display:flex;align-items:center;gap:8px}
+.cm-side{}
+.cm-slabel{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px}
+.cm-grade{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1}
+.cm-grade.r{color:#f5836b}
+.cm-grade.g{color:#4dd99b}
+.cm-metric{font-size:10px;color:rgba(255,255,255,.4);line-height:1.5;margin-top:3px}
+.cm-metric strong{color:rgba(255,255,255,.75)}
+.cm-center{flex:1;text-align:center;padding:0 8px}
+.cm-verdict{font-size:11px;color:rgba(255,255,255,.4);line-height:1.55}
+.cm-verdict strong{color:#fff;display:block;font-size:12px;font-family:'Playfair Display',serif;margin-bottom:2px}
+.cm-div{width:0.5px;background:rgba(255,255,255,.08);align-self:stretch;flex-shrink:0}
+.cm-note{font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;padding:0 2px}
+
+/* TWO MODES */
+.modes-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+.mode-card{background:var(--white);border:0.5px solid var(--border2);border-radius:var(--rl);padding:22px;transition:.15s}
+.mode-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.mc-pre{border-top:3px solid var(--accent)}
+.mc-ex{border-top:3px solid var(--teal)}
+.mc-icon{font-size:22px;margin-bottom:10px}
+.mc-question{font-family:'Playfair Display',serif;font-size:16px;color:var(--navy);margin-bottom:8px;line-height:1.3}
+.mc-body{font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:14px}
+.mc-out{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.out-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;background:var(--accent)}
+.out-dot.teal{background:var(--teal)}
+
+/* DESIGN DECISIONS */
+.decision{display:flex;gap:28px;padding:26px 0;border-bottom:0.5px solid var(--border);align-items:flex-start}
+.decision:last-child{border-bottom:none}
+.d-num{font-family:'Playfair Display',serif;font-size:40px;color:var(--border2);flex-shrink:0;width:52px;line-height:1;padding-top:2px}
+.d-title{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.d-body{font-size:14px;color:var(--text2);line-height:1.8}
+.d-tag{display:inline-flex;font-size:10px;padding:2px 9px;border-radius:10px;font-weight:600;margin-top:8px;background:var(--accent-light);color:var(--accent-dark)}
+.d-tag.teal{background:var(--teal-light);color:var(--teal)}
+
+/* WHAT IS / IS NOT */
+.not-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.not-card{border-radius:var(--rl);padding:20px}
+.nc-is{background:var(--green-light);border:0.5px solid rgba(15,110,86,.15)}
+.nc-not{background:var(--red-light);border:0.5px solid rgba(153,60,29,.1)}
+.nc-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.nc-is .nc-label{color:var(--green)}
+.nc-not .nc-label{color:var(--red)}
+.nc-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:9px;font-size:13px;line-height:1.6}
+.nc-is .nc-item{color:#0F5040}
+.nc-not .nc-item{color:#7a2a15}
+.nc-icon{flex-shrink:0;font-size:13px}
+
+/* EMBED */
+.embed-wrap{border:0.5px solid var(--border2);border-radius:var(--rl);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.07);margin-top:28px}
+.embed-bar{background:var(--navy2);padding:12px 20px;display:flex;align-items:center;gap:10px}
+.embed-dots{display:flex;gap:5px}
+.embed-dot{width:10px;height:10px;border-radius:50%}
+.embed-title{font-size:12px;color:rgba(255,255,255,.35);flex:1;text-align:center;font-weight:500}
+.embed-link{font-size:12px;color:var(--accent2);text-decoration:none;transition:.15s}
+.embed-link:hover{color:#fff}
+iframe.embed-frame{width:100%;height:820px;border:none;display:block;background:#fff}
+
+/* PORTFOLIO NOTE */
+.port-note{background:var(--warm);border-radius:var(--rl);padding:26px 30px;border-left:4px solid var(--accent)}
+.pn-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:7px}
+.pn-body{font-size:13px;color:var(--text2);line-height:1.8}
+
+/* CTA */
+.cta{background:var(--navy);border-radius:var(--rl);padding:48px;text-align:center;margin-top:36px;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(55,138,221,.09) 0%,transparent 70%);pointer-events:none}
+.cta-eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(93,202,165,.6);margin-bottom:10px;font-weight:600;position:relative}
+.cta-title{font-family:'Playfair Display',serif;font-size:28px;color:#fff;margin-bottom:8px;position:relative}
+.cta-sub{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:26px;position:relative}
+.cta-btns{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;position:relative}
+
+/* FOOTER */
+footer{background:var(--navy2);padding:40px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.footer-logo{font-family:'Playfair Display',serif;font-size:17px;color:#fff;font-style:italic}
+.footer-logo span{color:#5DCAA5;font-style:normal}
+.footer-by{font-size:12px;color:rgba(255,255,255,.25);margin-top:3px}
+.footer-links{display:flex;gap:24px}
+.footer-link{font-size:12px;color:rgba(255,255,255,.3);text-decoration:none;transition:.15s}
+.footer-link:hover{color:rgba(255,255,255,.75)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-stats{display:none}
+  .hero-title{font-size:38px}
+  .story-grid{grid-template-columns:1fr}
+  .sc-grid{grid-template-columns:1fr}
+  .modes-grid{grid-template-columns:1fr}
+  .not-grid{grid-template-columns:1fr}
+  .stats-bar{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  nav{padding:0 20px}
+  .nav-right .nav-link{display:none}
+  .hero{padding:52px 20px 0}
+  .hero-title{font-size:30px}
+  .section,.section-narrow,.full-bg-inner{padding:52px 20px}
+  .section-title{font-size:26px}
+  footer{padding:28px 20px;flex-direction:column;gap:14px}
+  .cta{padding:36px 20px}
+  .stats-bar{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="https://jmeihadsgn.wixstudio.com/jamieiha" class="nav-logo">jamie <span>iha</span></a>
+  <div class="nav-right">
+    <a href="https://jmeihadsgn.wixstudio.com/jamieiha" class="nav-link">← Portfolio</a>
+    <a href="https://www.linkedin.com/in/jamieiha" class="nav-link" target="_blank">LinkedIn</a>
+    <a href="https://jamieiha1111.github.io/buyer-decision-model/" class="nav-cta" target="_blank">Try the Tool ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-chip">Portfolio Project &nbsp;·&nbsp; Working Tool</div>
+      <div class="hero-hook">"Everyone in the room knows the numbers. Except the buyer."</div>
+      <h1 class="hero-title">Buyer Decision<br>Model —<br><em>Does the math agree?</em></h1>
+      <p class="hero-sub">A two-mode financial tool for real estate buyers. Model the true cost of any purchase — capital lockup, opportunity cost, rent vs. buy, and market timing — in real time. Built for buyers. Shareable by anyone in the transaction.</p>
+      <div class="hero-btns">
+        <a href="https://jamieiha1111.github.io/buyer-decision-model/" class="btn-pri" target="_blank">Try the Tool →</a>
+        <a href="#story" class="btn-out">Read the Case Study ↓</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hs-item"><div class="hs-num">2</div><div class="hs-label">Decision modes — pre-construction &amp; resale</div></div>
+      <div class="hs-divider"></div>
+      <div class="hs-item"><div class="hs-num">$10M</div><div class="hs-label">Price range — covers Hawaii luxury market</div></div>
+      <div class="hs-divider"></div>
+      <div class="hs-item"><div class="hs-num">A–F</div><div class="hs-label">Dynamic grade — recalibrated per price point</div></div>
+      <div class="hs-divider"></div>
+      <div class="hs-item"><div class="hs-num">0</div><div class="hs-label">Resets when switching tabs — state saves</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="sb-item"><div class="sb-num">Pre-construction</div><div class="sb-label">Capital lockup &nbsp;·&nbsp; Opportunity cost &nbsp;·&nbsp; Break-even appreciation</div></div>
+  <div class="sb-item"><div class="sb-num">Existing / Resale</div><div class="sb-label">Rent vs. buy &nbsp;·&nbsp; Break-even year &nbsp;·&nbsp; Market timing</div></div>
+  <div class="sb-item"><div class="sb-num">Plain English</div><div class="sb-label">Every output explained in simple terms — no financial jargon</div></div>
+  <div class="sb-item"><div class="sb-num">Side-by-side</div><div class="sb-label">Compare both options without losing your work</div></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- STORY -->
+<div class="section" id="story">
+  <div class="story-grid">
+    <div>
+      <div class="eyebrow">Why this exists</div>
+      <h2 class="section-title">I was the buyer who almost got it wrong</h2>
+      <p class="section-body">I was personally looking at an investment property in Hawaii. I had enough background to run the numbers and recognize the math did not work. But I kept thinking about my cousin — a lawyer — and my best friend — a bartender. Two smart, hardworking people who would have bought because an agent told them it was a good deal, and because no one ever showed them what the numbers actually said.</p>
+      <p class="section-body">That is the problem this tool addresses. Not that buyers are unsophisticated. Not that anyone in the transaction is dishonest. But that there is a structural information gap in one of the largest financial decisions most people will ever make — and almost nothing exists to close it.</p>
+      <p class="section-body">Everyone in the transaction has context the buyer does not. The agent knows comps. The developer knows margins. The lender knows rates. The buyer knows what they can afford and what they want. This tool gives them the one thing they are missing — what it actually costs, in their specific situation, right now.</p>
+      <div class="pull-quote">
+        <div class="pq-text">This is the problem I am interested in: information asymmetry in high-stakes decisions. Who has the context, who does not, and what does it cost the people who do not.</div>
+        <div class="pq-attr">Jamie Iha &nbsp;·&nbsp; on building this tool</div>
+      </div>
+    </div>
+    <div>
+      <div class="friction-list">
+        <div class="fl-title">Where buyer decisions break down</div>
+        <div class="fl-item"><span class="fl-dot"></span>Opportunity cost of the deposit is felt but never quantified — buyers do not know what that money would earn if kept invested</div>
+        <div class="fl-item"><span class="fl-dot"></span>Appreciation assumptions are guesses — no context for what rate a deal actually requires to break even</div>
+        <div class="fl-item"><span class="fl-dot"></span>Rent vs. buy is treated as a lifestyle question when it is a financial one — the break-even year is almost never calculated</div>
+        <div class="fl-item"><span class="fl-dot"></span>Market timing is driven by emotion — buyers rarely see what a rate change or price shift actually does to their monthly payment</div>
+        <div class="fl-item"><span class="fl-dot"></span>Pre-construction and resale decisions are evaluated in isolation — no tool exists to compare both options side by side</div>
+        <div class="fl-item"><span class="fl-dot"></span>Investment buyers and primary residence buyers are solving different problems — most tools do not distinguish between them</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TOOL SCREENSHOTS -->
+<div class="full-bg screenshots-bg" id="tool">
+  <div class="full-bg-inner">
+    <div class="eyebrow">The Tool</div>
+    <h2 class="section-title">Three moments that matter</h2>
+    <p class="section-body" style="max-width:600px">The tool does three things most financial calculators do not: it gives you a grade, it explains what that grade means in plain English, and it lets you compare two real options side by side without losing your work.</p>
+
+    <div class="sc-grid">
+      <!-- GRADE + SUMMARY -->
+      <div>
+        <div class="mock-wrap">
+          <div class="mock-bar">
+            <div class="mock-dot" style="background:#ff5f57"></div>
+            <div class="mock-dot" style="background:#febc2e"></div>
+            <div class="mock-dot" style="background:#28c840"></div>
+          </div>
+          <div class="mock-body">
+            <div class="gm">
+              <div>
+                <div class="gm-eyebrow">Deal strength</div>
+                <div class="gm-title">Challenging</div>
+                <div class="gm-sub">Financial gap is meaningful at current assumptions.</div>
+              </div>
+              <div class="gm-grade">D</div>
+            </div>
+            <div class="kpi-mini">
+              <div class="km"><div class="km-l">Capital locked</div><div class="km-v b">$150k</div></div>
+              <div class="km"><div class="km-l">Cost of wait</div><div class="km-v r">$149k</div></div>
+              <div class="km"><div class="km-l">Expected gain</div><div class="km-v g">$82k</div></div>
+              <div class="km"><div class="km-l">Net position</div><div class="km-v r">-$67k</div></div>
+            </div>
+            <div class="sum-mock">
+              <div class="sm-lbl">What this means</div>
+              <div class="sm-txt">Your total cost of waiting is <span class="sm-red">$149k</span>. The home is only expected to gain <span class="sm-green">$82k</span>. You are starting <span class="sm-red">$67k in the hole</span> before you even move in.</div>
+            </div>
+          </div>
+        </div>
+        <div class="mock-caption">Deal grade + plain English summary — updates as you move sliders</div>
+      </div>
+
+      <!-- COMPARISON BAR -->
+      <div>
+        <div class="mock-wrap">
+          <div class="mock-bar">
+            <div class="mock-dot" style="background:#ff5f57"></div>
+            <div class="mock-dot" style="background:#febc2e"></div>
+            <div class="mock-dot" style="background:#28c840"></div>
+          </div>
+          <div class="mock-body">
+            <div class="cm">
+              <div class="cm-lbl">Comparing both options</div>
+              <div class="cm-row">
+                <div class="cm-side">
+                  <div class="cm-slabel">Pre-construction</div>
+                  <div class="cm-grade r">D</div>
+                  <div class="cm-metric">Net: <strong>-$67k</strong><br>Needs: <strong>7.2%/yr</strong></div>
+                </div>
+                <div class="cm-div"></div>
+                <div class="cm-center">
+                  <div class="cm-verdict"><strong>Existing home wins</strong>Break-even in Year 6 vs. 7.2%/yr appreciation needed to justify pre-construction.</div>
+                </div>
+                <div class="cm-div"></div>
+                <div class="cm-side" style="text-align:right">
+                  <div class="cm-slabel" style="text-align:right">Existing / resale</div>
+                  <div class="cm-grade g" style="text-align:right">B</div>
+                  <div class="cm-metric" style="text-align:right">Adv: <strong>+$44k</strong><br>Break-even: <strong>Yr 6</strong></div>
+                </div>
+              </div>
+            </div>
+            <div class="cm-note">State saves when you switch tabs — your pre-construction scenario stays exactly where you left it while you explore the existing home option.</div>
+          </div>
+        </div>
+        <div class="mock-caption">Side-by-side comparison — appears once both modes have been run</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TWO MODES -->
+<div class="section">
+  <div class="eyebrow">The Design</div>
+  <h2 class="section-title">One tool, two fundamentally different decisions</h2>
+  <p class="section-body" style="max-width:640px">Pre-construction and resale are not variations of the same question. They are different financial problems that happen to involve real estate. The tool has two modes that share common inputs but produce entirely different outputs — built around the distinct question each decision actually requires.</p>
+
+  <div class="modes-grid">
+    <div class="mode-card mc-pre">
+      <div class="mc-icon">🏗</div>
+      <div class="mc-question">Is locking my capital up for months — or years — worth it compared to keeping it invested?</div>
+      <div class="mc-body">Models the true cost of waiting: opportunity cost on the deposit, housing costs during the wait, and whether expected appreciation justifies the commitment over a HYSA or ETF.</div>
+      <div class="mc-out"><span class="out-dot"></span>Capital locked + foregone investment returns</div>
+      <div class="mc-out"><span class="out-dot"></span>Wait cost vs. expected appreciation gain</div>
+      <div class="mc-out"><span class="out-dot"></span>Break-even appreciation rate</div>
+      <div class="mc-out"><span class="out-dot"></span>Primary residence vs. investment buyer toggle</div>
+    </div>
+    <div class="mode-card mc-ex">
+      <div class="mc-icon">🏡</div>
+      <div class="mc-question">You found the home. Does the math agree?</div>
+      <div class="mc-body">Answers the rent vs. buy question with actual numbers. Monthly cost comparison, break-even year, market timing sensitivity, and whether keeping the down payment invested outperforms buying.</div>
+      <div class="mc-out"><span class="out-dot teal"></span>Monthly cost to own vs. comparable rent</div>
+      <div class="mc-out"><span class="out-dot teal"></span>Break-even year — when buying beats renting</div>
+      <div class="mc-out"><span class="out-dot teal"></span>Buy now vs. wait — rate and price timing model</div>
+      <div class="mc-out"><span class="out-dot teal"></span>Buy vs. keep deposit invested chart</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- DESIGN DECISIONS -->
+<div class="full-bg" style="background:var(--warm)">
+  <div class="full-bg-inner">
+    <div class="eyebrow">Design Decisions</div>
+    <h2 class="section-title">Why it works the way it does</h2>
+    <p class="section-body" style="max-width:640px">Every structural choice reflects a specific decision about how buyers actually think — and where financial tools typically fail them.</p>
+
+    <div>
+      <div class="decision">
+        <div class="d-num">01</div>
+        <div>
+          <div class="d-title">Score relative to price, penalized by timeline</div>
+          <div class="d-body">A raw dollar threshold fails at scale — a $50k net gain means something very different on a $400k condo than a $4M penthouse. The score uses net position as a percentage of purchase price with a 1.5% penalty per year of capital lockup. At Hawaii's historical appreciation average of 3.5% over 36 months, the tool correctly grades the deal as D — not Strong.</div>
+          <span class="d-tag">Financial modeling</span>
+        </div>
+      </div>
+      <div class="decision">
+        <div class="d-num">02</div>
+        <div>
+          <div class="d-title">Primary residence vs. investment buyer toggle</div>
+          <div class="d-body">Housing cost during the wait period is a real out-of-pocket cost for someone currently renting — but completely irrelevant for an investor who already owns. The toggle changes what factors into the score, not just the labels. Investment buyers see the slider marked optional with a checkbox to include it if relevant to their situation.</div>
+          <span class="d-tag">UX decision</span>
+        </div>
+      </div>
+      <div class="decision">
+        <div class="d-num">03</div>
+        <div>
+          <div class="d-title">Plain English summaries that read actual numbers</div>
+          <div class="d-body">Every output section ends with a 2–3 sentence summary written from the user's specific scenario values. Not a generic description of what the chart shows. "Your total cost of waiting is $148k. The home is only expected to gain $81k in that time. You are starting $67k in the hole before you even move in." That is a sentence a buyer can act on.</div>
+          <span class="d-tag">UX writing</span>
+        </div>
+      </div>
+      <div class="decision">
+        <div class="d-num">04</div>
+        <div>
+          <div class="d-title">Hawaii-anchored context on every ambiguous input</div>
+          <div class="d-body">Appreciation, construction timelines, cap rates — inputs that require market knowledge include helper text anchored to Hawaii data. A buyer who does not know what appreciation to expect sees "Hawaii condos have historically averaged 3–5%/yr. Use 3.5% as a conservative baseline." They get a starting point, not a blank slider with a number they have to invent.</div>
+          <span class="d-tag">Content strategy</span>
+        </div>
+      </div>
+      <div class="decision">
+        <div class="d-num">05</div>
+        <div>
+          <div class="d-title">State saves between tabs — nothing resets when you switch</div>
+          <div class="d-body">The most common use case is a buyer evaluating two real options at the same time. If switching tabs reset the inputs, the tool would force users to re-enter their scenario from scratch — exactly the kind of friction that causes people to abandon tools halfway through. State saves automatically on tab switch and restores on return. Each tab has its own reset button so users can clear one scenario without losing the other.</div>
+          <span class="d-tag teal">Systems thinking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- WHAT IS / IS NOT -->
+<div class="section">
+  <div class="eyebrow">Scope</div>
+  <h2 class="section-title">What this tool is — and what it is not</h2>
+  <p class="section-body" style="max-width:600px">Clarity about scope is a design decision. The tool is explicit about its limitations because a tool that overclaims loses user trust the moment a real-world outcome diverges from the output.</p>
+  <div class="not-grid">
+    <div class="not-card nc-is">
+      <div class="nc-label">What it is</div>
+      <div class="nc-item"><span class="nc-icon">✓</span>A financial decision-support tool for buyers evaluating real estate purchases</div>
+      <div class="nc-item"><span class="nc-icon">✓</span>A way to quantify opportunity cost, wait cost, and break-even thresholds</div>
+      <div class="nc-item"><span class="nc-icon">✓</span>A comparison tool for buyers weighing pre-construction vs. existing options</div>
+      <div class="nc-item"><span class="nc-icon">✓</span>A starting point for a conversation with a broker or financial advisor</div>
+      <div class="nc-item"><span class="nc-icon">✓</span>A tool that works from $300k condos to $10M luxury properties in Hawaii</div>
+    </div>
+    <div class="not-card nc-not">
+      <div class="nc-label">What it is not</div>
+      <div class="nc-item"><span class="nc-icon">✗</span>Financial, investment, legal, or real estate advice</div>
+      <div class="nc-item"><span class="nc-icon">✗</span>A mortgage qualification or affordability calculator</div>
+      <div class="nc-item"><span class="nc-icon">✗</span>A guarantee of future appreciation, returns, or market conditions</div>
+      <div class="nc-item"><span class="nc-icon">✗</span>A replacement for a licensed financial advisor or real estate professional</div>
+      <div class="nc-item"><span class="nc-icon">✗</span>A model that accounts for closing costs, capital gains, or individual tax situations</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- LIVE TOOL EMBED -->
+<div class="section" id="live">
+  <div class="eyebrow teal">Live Tool</div>
+  <h2 class="section-title">Try both modes</h2>
+  <p class="section-body" style="max-width:600px">Both pre-construction and existing home scenarios are fully live. State saves when you switch between modes — configure both to see the comparison bar appear.</p>
+  <div class="embed-wrap">
+    <div class="embed-bar">
+      <div class="embed-dots">
+        <div class="embed-dot" style="background:#ff5f57"></div>
+        <div class="embed-dot" style="background:#febc2e"></div>
+        <div class="embed-dot" style="background:#28c840"></div>
+      </div>
+      <div class="embed-title">Buyer Decision Model &nbsp;·&nbsp; Live Tool</div>
+      <a href="https://jamieiha1111.github.io/buyer-decision-model/" target="_blank" class="embed-link">Open full screen ↗</a>
+    </div>
+    <iframe class="embed-frame" src="https://jamieiha1111.github.io/buyer-decision-model/" title="Buyer Decision Model interactive tool" loading="lazy"></iframe>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONTEXT + PORTFOLIO NOTE -->
+<div class="section-narrow">
+  <div class="eyebrow">Context</div>
+  <h2 class="section-title">What this project demonstrates</h2>
+  <p class="section-body">This tool was built to demonstrate financial modeling, UX systems thinking, and the ability to translate complex decisions into interfaces that non-experts can actually use. The design choices — from how the score is calibrated to why each section has a plain English summary — reflect a specific point of view about where financial tools fail the people they are supposed to serve.</p>
+  <p class="section-body">Nearly ten years of experience coordinating operations, finance, and strategy in commercial real estate informed the framing. The problems this tool addresses — buyers who feel the math but cannot see it, decisions made on intuition because the numbers are too abstract — are problems I have watched play out in real transactions.</p>
+
+  <div class="port-note" style="margin-top:28px">
+    <div class="pn-title">Portfolio note</div>
+    <div class="pn-body">This is a working prototype built for portfolio purposes. It simplifies mortgage amortization, closing costs, tax obligations, HOA escalation, capital gains treatment, and individual financial circumstances. It does not constitute financial, investment, legal, or real estate advice. All outputs are estimates based on user-entered assumptions. Always consult a licensed financial advisor and real estate professional before making any real estate or investment decision.</div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-eyebrow">Working Tool</div>
+    <div class="cta-title">Try both modes</div>
+    <div class="cta-sub">Pre-construction and existing home scenarios are both live.</div>
+    <div class="cta-btns">
+      <a href="https://jamieiha1111.github.io/buyer-decision-model/" class="btn-pri" target="_blank">Open the Tool →</a>
+      <a href="https://jmeihadsgn.wixstudio.com/jamieiha" class="btn-out">← Back to Portfolio</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Buyer Decision <span>Model</span></div>
+    <div class="footer-by">A portfolio project by Jamie Iha &nbsp;·&nbsp; Commercial Strategy &amp; Operations</div>
+  </div>
+  <div class="footer-links">
+    <a href="https://jmeihadsgn.wixstudio.com/jamieiha" class="footer-link">Portfolio</a>
+    <a href="https://jamieiha1111.github.io/buyer-decision-model/" class="footer-link" target="_blank">Live Tool</a>
+    <a href="https://www.linkedin.com/in/jamieiha" class="footer-link" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+</body>
+</html>
